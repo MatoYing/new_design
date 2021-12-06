@@ -31,7 +31,7 @@ import java.util.List;
 
 @WebServlet(urlPatterns = "/uploadServlet")
 public class UploadServlet  extends HttpServlet {
-    static int onlyID = 10;
+    static int onlyID = 11;
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //        String name = req.getParameter("name");
@@ -42,10 +42,14 @@ public class UploadServlet  extends HttpServlet {
 //            float price = Float.parseFloat(req.getParameter("price"));
 //        }
 //        String introduction = req.getParameter("introduction");
+        req.setCharacterEncoding("utf-8");
+        resp.setCharacterEncoding("utf-8");
+        resp.setContentType("text/html;charset=UTF-8");
         String name = null;
+        int onlyID2 = 0;
         int limit = 0;
         String date;
-        String isPrice;
+        String isPrice = null;
         float price = 0;
         String introduction = null;
         java.sql.Date date1 = null;
@@ -84,24 +88,26 @@ public class UploadServlet  extends HttpServlet {
                             date2 = new java.sql.Date(agent2.getTime());
                         } else if (item.getFieldName().equals("isPrice")) {
                             isPrice = item.getString("UTF-8");
-                            if (isPrice.equals("1") && item.getFieldName().equals("price")) {
-                                price = Float.parseFloat(item.getString("UTF-8"));
-                            }
-                        } else if (item.getFieldName().equals("introduction")) {
-                            introduction = item.getString("UTF-8");
-                        } else {
-                            String fileName = item.getName();
-                            String ext = fileName.substring(fileName.indexOf(".") + 1);
-                            String path = "C:\\C\\new_design\\src\\main\\webapp\\WEB-INF\\upload";
-//                            i = select_project_id_sql() + 1;
-                            fileName = onlyID + "." + ext;
-                            File file = new File(path, fileName);
-                            item.write(file);
+                            System.out.println("is" + isPrice);
+                        } else if (isPrice.equals("1") && item.getFieldName().equals("price")) {
+                            price = Float.parseFloat(item.getString("UTF-8"));
                         }
+                        else if (item.getFieldName().equals("introduction")) {
+                            introduction = item.getString("UTF-8");
+                        }
+                    } else {
+                        String fileName = item.getName();
+                        System.out.println("file" + fileName);
+                        String ext = fileName.substring(fileName.indexOf(".") + 1);
+                        String path = "C:\\C\\new_design\\src\\main\\webapp\\WEB-INF\\upload";
+                        onlyID2 = commonDao.select_max_ID_sql();
+                        onlyID2++;
+                        fileName = onlyID2 + "." + ext;
+                        File file = new File(path, fileName);
+                        item.write(file);
                     }
                 }
-                commonDao.insert_subject_sql(onlyID ,name, introduction, number, date1, date2, price, limit);
-                req.getRequestDispatcher("/WEB-INF/teacher/uploaded.jsp").forward(req,resp);
+                commonDao.insert_subject_sql(onlyID2 ,name, introduction, number, date1, date2, price, limit);
             } catch (FileUploadBase.SizeLimitExceededException e) {
                 e.printStackTrace();
             } catch (FileUploadException e) {

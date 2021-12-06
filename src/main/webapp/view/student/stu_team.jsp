@@ -82,7 +82,7 @@
                                         团队动态
                                     </div>
                                     <div class="col-3 offset-6">
-                                        <input type="text" class="form-control" value="321314324737" readonly="readonly">
+                                        <input type="text" class="form-control" readonly="readonly" id="team_code_show" value="">
                                     </div>
                                     <i class="text-muted" data-feather="info" data-bs-toggle="tooltip" data-bs-placement="left" title="如已报名赛题，则团队无法再添加队员"></i>
                                 </div>
@@ -117,36 +117,35 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card mb-4">
-                            <div class="card-header">历史组员</div>
-                            <div class="card-body">
-                                <table id="datatablesSimple">
-                                    <thead>
-                                        <tr>
-                                            <th>成员</th>
-                                            <th>角色</th>
-                                            <th>赛题名称</th>
-                                            <th>加入日期</th>
-                                            <th>成绩</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar me-2"><img class="avatar-img img-fluid" src="/assets/img/illustrations/profiles/profile-2.png" /></div>
-                                                    Garrett Winters
-                                                </div>
-                                            </td>
-                                            <td>李老师</td>
-                                            <td>Edinburgh</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+<%--                        <div class="card mb-4">--%>
+<%--                            <div class="card-header">历史组员</div>--%>
+<%--                            <div class="card-body">--%>
+<%--                                <table id="datatablesSimple">--%>
+<%--                                    <thead>--%>
+<%--                                        <tr>--%>
+<%--                                            <th>成员</th>--%>
+<%--                                            <th>角色</th>--%>
+<%--                                            <th>赛题名称</th>--%>
+<%--                                            <th>加入日期</th>--%>
+<%--                                            <th>成绩</th>--%>
+<%--                                        </tr>--%>
+<%--                                    </thead>--%>
+<%--                                    <tbody>--%>
+<%--                                        <tr>--%>
+<%--                                            <td>--%>
+<%--                                                <div class="d-flex align-items-center">--%>
+<%--                                                    Garrett Winters--%>
+<%--                                                </div>--%>
+<%--                                            </td>--%>
+<%--                                            <td>李老师</td>--%>
+<%--                                            <td>Edinburgh</td>--%>
+<%--                                            <td>2011/04/25</td>--%>
+<%--                                            <td>$320,800</td>--%>
+<%--                                        </tr>--%>
+<%--                                    </tbody>--%>
+<%--                                </table>--%>
+<%--                            </div>--%>
+<%--                        </div>--%>
                     </div>
                 </main>
 
@@ -214,6 +213,8 @@
 <%--            <c:set var="isTeam" value="${team.select_isTeam_sql(number)}"/>--%>
             //JSTL判断为空方法
             <c:if test="${not empty isTeam}">
+                console.log(21);
+                console.log(${isTeam});
                 $('#team_code_show').val(${isTeam});
             </c:if>
 

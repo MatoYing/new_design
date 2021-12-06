@@ -38,7 +38,8 @@ public class LoginServlet extends HttpServlet {
 //        ObjectMapper mapper = new ObjectMapper();
         PrintWriter out = resp.getWriter();
 //        String json = mapper.writeValueAsString(person);
-        if (person != null || person.getEmail().equals("")) {
+        System.out.println(person);
+        if (person != null && !person.getEmail().equals("")) {
             String real_password = person.getPassword();
             int type = person.getType();
             if (checkCode == null) {
@@ -50,10 +51,12 @@ public class LoginServlet extends HttpServlet {
                     session.setAttribute("person", person);
                     session.setAttribute("number", number);
                 } else {
+                    System.out.println(11111);
                     i = 1;
                 }
             } else {
                 if (!password.equals(real_password)) {
+                    System.out.println(22222);
                     i = 1;
                 } else if (!verification.equals(checkCode)) {
                     i =2;
@@ -66,8 +69,10 @@ public class LoginServlet extends HttpServlet {
                 }
             }
         } else {
+
             i = 0;
         }
+        System.out.println(i);
         //别用write
         out.print(i);
         out.flush();

@@ -96,6 +96,122 @@ public class CommonDaoImpl implements IAllDao {
         return subjects;
     }
 
+    public ArrayList<ArrayList<Object>> select_person_subject_sql2(int number) {
+        //提取一个学生的所有请求
+        String sql = "SELECT `subject`.`name`, person.`name`, start_date, deadline, price, academy, `status`, date\n" +
+                "FROM application, person, `subject`\n" +
+                "WHERE application.number = ?\n" +
+                "  AND person.number = `subject`.number\n" +
+                "\tAND `subject`.ID = application.ID";
+        Object[] params = new Object[1];
+        params[0] = number;
+        ResultSet rs;
+        ArrayList<ArrayList<Object>> my_subject = new ArrayList<ArrayList<Object>>();
+        ArrayList<Object> my_mini_subject;
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                my_mini_subject = new ArrayList<Object>();
+                my_mini_subject.add(rs.getString(1));
+                my_mini_subject.add(rs.getString(2));
+                my_mini_subject.add(rs.getDate(3));
+                my_mini_subject.add(rs.getDate(4));
+                my_mini_subject.add(rs.getFloat(5));
+                my_mini_subject.add(rs.getString(6));
+                my_mini_subject.add(rs.getInt(7));
+                my_mini_subject.add(rs.getDate(8));
+                my_subject.add(my_mini_subject);
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return my_subject;
+    }
+
+    public ArrayList<ArrayList<Object>> select_person_subject_sql3(int number) {
+        //提取一个学生的所有请求
+        String sql = "SELECT `subject`.`name`, person.`name`, class_grade, `status`, date, useless, team\n" +
+                "FROM application, person, `subject`\n" +
+                "WHERE application.ID = `subject`.ID\n" +
+                "  AND `subject`.number = person.number\n" +
+                "  AND application.ID IN (SELECT ID\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t FROM `subject`\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t WHERE number = ?)";
+        Object[] params = new Object[1];
+        params[0] = number;
+        ResultSet rs;
+        ArrayList<ArrayList<Object>> my_subject = new ArrayList<ArrayList<Object>>();
+        ArrayList<Object> my_mini_subject;
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                my_mini_subject = new ArrayList<Object>();
+                my_mini_subject.add(rs.getString(1));
+                my_mini_subject.add(rs.getString(2));
+                my_mini_subject.add(rs.getString(3));
+                my_mini_subject.add(rs.getInt(4));
+                my_mini_subject.add(rs.getDate(5));
+                my_mini_subject.add(rs.getInt(6));
+                my_mini_subject.add(rs.getString(7));
+                my_subject.add(my_mini_subject);
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return my_subject;
+    }
+
+    public ArrayList<Subject> select_subject_sql4() {
+        //提取一个学院所有subject
+        //这里limit是关键词，要加上``，否则会报错
+        String sql = "SELECT ID, `name`, introduction, number, start_date, deadline, price, location, `limit`\n" +
+                "FROM subject\n" +
+                "ORDER BY ID DESC";
+        Object[] params = new Object[0];
+        ResultSet rs;
+        ArrayList<Subject> subjects = new ArrayList<Subject>();
+        Subject subject;
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                subject = new Subject(rs.getInt(1), rs.getString(2), rs.getString(3),
+                        rs.getInt(4), rs.getDate(5), rs.getDate(6),
+                        rs.getFloat(7), rs.getString(8), rs.getInt(9));
+                subjects.add(subject);
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return subjects;
+    }
+
+    public String select_academy_sql(int number) {
+        String sql = "SELECT academy\n" +
+                "FROM person\n" +
+                "WHERE number = ?";
+        Object[] params = new Object[1];
+        params[0] = number;
+        ResultSet rs;
+        String academy = null;
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                academy = rs.getString(1);
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return academy;
+    }
+
     public void insert_solo_request_sql(int ID, int number, Date date) {
         //个人请求赛题
         String sql = "INSERT INTO application (ID, number, date, status)\n" +
@@ -112,8 +228,8 @@ public class CommonDaoImpl implements IAllDao {
         String sql = "SELECT application.ID, `subject`.`name`, person.`name`, academy, start_date, deadline, price, `status`, team\n" +
                 "FROM person, application, `subject`\n" +
                 "WHERE application.number = ?\n" +
-                "\tAND `subject`.ID = application.ID\n" +
-                "\tAND `subject`.number = person.number";
+                " AND `subject`.ID = application.ID\n" +
+                " AND `subject`.number = person.number";
         Object[] params = new Object[1];
         params[0] = number;
         ResultSet rs;
@@ -178,9 +294,9 @@ public class CommonDaoImpl implements IAllDao {
 
     public void insert_subject_sql(int ID, String name, String introduction, int number, Date start_date, Date deadline, float price, int limit) {
         //上传赛题
-        String sql = "INSERT INTO subject (ID, name, introduction, number, start_date, deadline, price, limit)\n" +
+        String sql = "INSERT INTO subject (ID, name, introduction, number, start_date, deadline, price, `limit`)\n" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        Object[] params = new Object[7];
+        Object[] params = new Object[8];
         params[0] = ID;
         params[1] = name;
         params[2] = introduction;
@@ -206,7 +322,7 @@ public class CommonDaoImpl implements IAllDao {
 
     public int select_team_ID_sql(String team) {
         //通过团队码找赛题ID
-        String sql = "SELECT DISTINCT ID, date\n" +
+        String sql = "SELECT DISTINCT ID\n" +
                 "FROM application\n" +
                 "WHERE team = ?";
         Object[] params = new Object[1];
@@ -224,6 +340,27 @@ public class CommonDaoImpl implements IAllDao {
             e.printStackTrace();
         }
         return ID;
+    }
+
+    public ArrayList<String> select_team_ID_exist_sql() {
+        //提取出所有团队码
+        String sql = "SELECT team\n" +
+                "FROM application\n" +
+                "WHERE team IS NOT NULL";
+        Object[] params = new Object[0];
+        ResultSet rs;
+        ArrayList<String> allTeam= new ArrayList<String>();
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                allTeam.add(rs.getString(1));
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return allTeam;
     }
 
     public ArrayList<ArrayList<Object>> select_teammate_sql(String team) {
@@ -303,11 +440,136 @@ public class CommonDaoImpl implements IAllDao {
     }
 
     public void delete_teammate_sql(int useless) {
-        //团队报名请求
+        //删除组员
         String sql = "DELETE FROM application\n" +
                 "WHERE useless = ?";
         Object[] params = new Object[1];
         params[0] = useless;
         executeUpdate(sql, params);
     }
+
+    public String select_teacher_name_sql(int number) {
+        //选取老师的姓名
+        String sql = "SELECT name\n" +
+                "FROM person\n" +
+                "WHERE number = ?";
+        Object[] params = new Object[1];
+        params[0] = number;
+        ResultSet rs;
+        String name = null;
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                name = rs.getString(1);
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return name;
+    }
+
+    public int select_max_ID_sql() {
+        //获得最大的赛题ID
+        String sql = "SELECT MAX(ID)\n" +
+                "FROM `subject`";
+        Object[] params = new Object[0];
+        ResultSet rs;
+        int ID = 0;
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                ID = rs.getInt(1);
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ID;
+    }
+
+    public ArrayList<Subject> select_one_subject_sql(int number) {
+        //提取一个老师的所有subject
+        String sql = "SELECT ID, `name`, introduction, number, start_date, deadline, price, location, `limit`\n" +
+                "FROM subject\n" +
+                "WHERE number = ?";
+        Object[] params = new Object[1];
+        params[0] = number;
+        ResultSet rs;
+        ArrayList<Subject> subjects = new ArrayList<Subject>();
+        Subject subject;
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                subject = new Subject(rs.getInt(1), rs.getString(2), rs.getString(3),
+                        rs.getInt(4), rs.getDate(5), rs.getDate(6),
+                        rs.getFloat(7), rs.getString(8), rs.getInt(9));
+                subjects.add(subject);
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return subjects;
+    }
+
+    public ArrayList<Person> select_get_number_sql(int ID) {
+        //选取一个subject的所有学员
+        String sql = "SELECT person.`name`, academy, class_grade\n" +
+                "FROM person\n" +
+                "WHERE number IN (SELECT number\n" +
+                "\t\t\t\t\t\t\t\t FROM application\n" +
+                "\t\t\t\t\t\t\t\t WHERE `status` = 2\n" +
+                "\t\t\t\t\t\t\t\t   AND ID = ?)";
+        Object[] params = new Object[1];
+        params[0] = ID;
+        ResultSet rs;
+        ArrayList<Person> people = new ArrayList<Person>();
+        Person person;
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                person = new Person();
+                person.setName(rs.getString(1));
+                person.setAcademy(rs.getString(2));
+                person.setClass_grade(rs.getString(3));
+                people.add(person);
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return people;
+    }
+
+    public Subject select_onlyOne_subject_sql(int ID) {
+        //选取一个赛题所有信息
+        String sql = "SELECT *\n" +
+                "FROM `subject`\n" +
+                "WHERE ID = ?";
+        Object[] params = new Object[1];
+        params[0] = ID;
+        ResultSet rs;
+        Subject subject = null;
+        rs = executeSelect(sql, params);
+        try {
+            while (rs.next()) {
+                subject = new Subject(rs.getInt(1), rs.getString(2),
+                        rs.getString(3), rs.getInt(4), rs.getDate(5),
+                        rs.getDate(6), rs.getFloat(7), rs.getString(8),
+                        rs.getInt(9));
+            }
+            pre.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(subject);
+        return subject;
+    }
+
 }

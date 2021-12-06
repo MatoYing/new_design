@@ -25,18 +25,18 @@ public class RequestServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int ID = Integer.parseInt(req.getParameter("id"));
+        IAllDao commonDao = new CommonDaoImpl();
+        int limit = commonDao.select_team_sql(ID);
         HttpSession session = req.getSession(true);
         int number = (int) session.getAttribute("number");
-        IAllDao commonDao = new CommonDaoImpl();
         ArrayList<ArrayList<Object>> my_subject = new ArrayList<ArrayList<Object>>();
         my_subject = commonDao.select_person_subject_sql(number);
         long time = System.currentTimeMillis();
         Date date = new Date(time);
-        int limit = commonDao.select_team_sql(ID);
         int i;
         boolean isPerson = false;
         for(int k = 0; k < my_subject.size(); k++) {
-            isPerson = my_subject.get(k).contains(ID);
+            isPerson = my_subject.get(k).contains(number);
             if (isPerson == true) {
                 break;
             }
@@ -45,30 +45,9 @@ public class RequestServlet extends HttpServlet {
             //已经报名
             i = 1;
         } else {
-            if (limit == 1) {
-                //1是个人题目
-                commonDao.insert_solo_request_sql(ID, number, date);
-                i = 2;
-            } else {
-                //2是小组题目
-                boolean isTeam = false;
-                String team_code = req.getParameter("team_code");
-                for(int k = 0; k < my_subject.size(); k++) {
-                    isTeam = my_subject.get(k).contains(team_code);
-                    if (isTeam == true) {
-                        break;
-                    }
-                }
-                if (isTeam == true) {
-                    //可以报名
-                    commonDao.update_team_sql(ID, team_code);
-                    i = 2;
-                } else {
-                    //没这个组
-                    i = 3;
-                }
-
-            }
+            //成功报名
+            commonDao.insert_solo_request_sql(ID, number, date);
+            i = 2;
         }
         PrintWriter out = resp.getWriter();
         out.print(i);

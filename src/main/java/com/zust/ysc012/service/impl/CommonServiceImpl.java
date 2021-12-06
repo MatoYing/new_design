@@ -1,13 +1,24 @@
 package com.zust.ysc012.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.zust.ysc012.dao.IAllDao;
+import com.zust.ysc012.dao.impl.CommonDaoImpl;
+import com.zust.ysc012.entity.AccessToken;
+import com.zust.ysc012.entity.GithubUser;
+import com.zust.ysc012.entity.Person;
 import com.zust.ysc012.service.IAllService;
+import okhttp3.*;
 
 import javax.imageio.ImageIO;
 import javax.mail.*;
+import javax.mail.Authenticator;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.awt.*;
+import java.io.IOException;
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
 
@@ -65,5 +76,58 @@ public class CommonServiceImpl implements IAllService {
         }
         return i;
     }
+
+
+    public int only_date(Date deadline) {
+        long time = System.currentTimeMillis();
+        Date now = new Date(time);
+        int compareTo = now.compareTo(deadline);
+        return compareTo;
+    }
+
+//    public int number(int ID) {
+//        ArrayList<Person> people = new ArrayList<Person>;
+//        IAllDao commonDao = new CommonDaoImpl();
+//        people = commonDao.select_get_number_sql(ID)
+//        int a = people.size();
+//        return a;
+//    }
+
+    public String getAccessToken(AccessToken accessToken) {
+        MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(mediaType, JSON.toJSONString(accessToken));
+        Request request = new Request.Builder()
+                .url("https://github.com/login/oauth/access_token")
+                .post(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            String string = response.body().string();
+            String[] split = string.split("&");
+            String tokenstr = split[0];
+            String token = tokenstr.split("=")[1];
+            return token;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public GithubUser getUser(String accessToken) {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("https://api.github.com/user?access_token=" + accessToken)
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            String string = response.body().string();
+            GithubUser githubUser = JSON.parseObject(string, GithubUser.class);
+            return githubUser;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

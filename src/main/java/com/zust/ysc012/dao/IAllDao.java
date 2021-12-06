@@ -26,6 +26,7 @@ public interface IAllDao {
     public ArrayList<Subject> select_subject_sql(String academy);
     public void insert_solo_request_sql(int ID, int number, Date date);
     public ArrayList<ArrayList<Object>> select_person_subject_sql(int number);
+//    public ArrayList<ArrayList<Object>> select_person_subject_sql(int number, int limit);
     public int select_team_sql(int ID);
     public void update_team_sql(int ID, String team);
     public void insert_subject_sql(int ID, String name, String introduction, int number, Date start_date, Date deadline, float price, int limit);
@@ -36,4 +37,14 @@ public interface IAllDao {
     public String select_isTeam_sql(int number);
     public ArrayList<ArrayList<Object>> select_teammate_sql(String team);
     public void delete_teammate_sql(int useless);
+    public String select_teacher_name_sql(int number);
+    public ArrayList<String> select_team_ID_exist_sql();
+    public ArrayList<ArrayList<Object>> select_person_subject_sql2(int number);
+    public ArrayList<ArrayList<Object>> select_person_subject_sql3(int number);
+    public int select_max_ID_sql();
+    public ArrayList<Subject> select_one_subject_sql(int number);
+    public ArrayList<Person> select_get_number_sql(int ID);
+    public Subject select_onlyOne_subject_sql(int ID);
+    public ArrayList<Subject> select_subject_sql4();
+    public String select_academy_sql(int number);
 }

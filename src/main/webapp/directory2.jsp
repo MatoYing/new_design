@@ -17,7 +17,7 @@
                 </a>
                 <div class="sidenav-menu-heading">赛事信息</div>
                 <!-- Sidenav Link (Charts)-->
-                <a class="nav-link" href="home.jsp">
+                <a class="nav-link" href="/view/common/home.jsp">
                     <div class="nav-link-icon"></div>
                     首页
                 </a>

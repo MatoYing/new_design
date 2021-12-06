@@ -2,6 +2,7 @@
 <%-- useBean不能用接口，因为接口不能被实例化 --%>
 <%-- 为什么用useBean，如果想靠每次刷新servlet拿会很费劲 --%>
 <jsp:useBean id="subjects" class="com.zust.ysc012.dao.impl.CommonDaoImpl" scope="page"/>
+<jsp:useBean id="date" class="com.zust.ysc012.service.impl.CommonServiceImpl" scope="page"/>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="zh-CN">
 <head>
@@ -14,6 +15,13 @@
     <link rel="stylesheet" href="/JQuery/chat/css/chat.css">
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
+    <style>
+        @media (max-width: 500px) {
+            #one_media {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body class="nav-fixed">
         <%@ include file="/directory1.jsp"%>
@@ -40,7 +48,7 @@
                         <div class="card mb-4">
                             <div class="card-header">最新赛题</div>
                             <div class="card-body">
-                                <c:forEach items='<%=subjects.select_subject_sql("信息与电子工程学院")%>' var="subject" begin="0" end="2"><%-- 取3个 --%>
+                                <c:forEach items='<%=subjects.select_subject_sql("信息与电子工程学院")%>' var="subject" begin="0" end="2">
                                     <div class="sbp-preview-content bg-light mb-4">
                                         <div class="card card-header-actions">
                                             <div class="card-header">
@@ -48,7 +56,10 @@
                                                 <div>
                                                     <a class="btn btn-yellow btn-icon me-2" href=""><i class="fa fa-envelope" aria-hidden="true"></i></a>
                                                     <a class="btn btn-teal btn-icon me-2" href="/downloadServlet?filename=${subject.ID}"><i class="fa fa-download" aria-hidden="true"></i></a>
-                                                    <a class="btn btn-blue btn-icon" onclick="a2(${subject.ID}, ${subject.limit})"><i class="fa fa-check-square" aria-hidden="true"></i></a>
+                                                    <c:set var="deadline" value="${subject.deadline}"/>
+                                                    <c:if test="${date.only_date(deadline) == -1}">
+                                                        <a class="btn btn-blue btn-icon" onclick="a2(${subject.ID}, ${subject.limit})"><i class="fa fa-check-square" aria-hidden="true"></i></a>
+                                                    </c:if>
                                                 </div>
                                             </div>
                                             <div class="card-body"><p class="card-text">${subject.introduction}</p></div>
@@ -58,7 +69,7 @@
                             </div>
                         </div>
                         
-                        <div class="card mb-4">
+                        <div class="card mb-4" id="one_media">
                             <div class="card-header">全部赛题</div>
                             <div class="card-body">
                                 <table id="datatablesSimple">
@@ -66,7 +77,6 @@
                                         <tr>
                                             <th>赛题名称</th>
                                             <th>负责老师</th>
-                                            <th>隶属学院</th>
                                             <th>开始日期</th>
                                             <th>结束日期</th>
                                             <th>费用</th>
@@ -75,51 +85,36 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>李老师</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
-                                            <td><div class="badge bg-primary text-white rounded-pill">Full-time</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa fa-download" aria-hidden="true"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa fa-check-square" aria-hidden="true"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Garrett Winters</td>
-                                            <td>王老师</td>
-                                            <td>Tokyo</td>
-                                            <td>63</td>
-                                            <td>2011/07/25</td>
-                                            <td>$170,750</td>
-                                            <td><div class="badge bg-warning rounded-pill">Pending</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa fa-download" aria-hidden="true"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa fa-check-square" aria-hidden="true"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Donna Snider</td>
-                                            <td>张老师</td>
-                                            <td>New York</td>
-                                            <td>27</td>
-                                            <td>2011/01/25</td>
-                                            <td>$112,000</td>
-                                            <td><div class="badge bg-secondary text-white rounded-pill">Part-time</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa fa-download" aria-hidden="true"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa fa-check-square" aria-hidden="true"></i></button>
-                                            </td>
-                                        </tr>
+                                        <c:forEach items='<%=subjects.select_subject_sql("信息与电子工程学院")%>' var="subject"><%-- 取3个 --%>
+                                            <tr>
+                                                <c:set var="number" value="${subject.number}"/>
+                                                <c:set var="deadline" value="${subject.deadline}"/>
+                                                <td>${subject.name}</td>
+                                                <td>${subjects.select_teacher_name_sql(number)}</td>
+                                                <td>${subject.start_date}</td>
+                                                <td>${subject.deadline}</td>
+                                                <td>${subject.price}</td>
+                                                <td>
+                                                    <c:if test="${date.only_date(deadline) == 1}">
+                                                        <div class="badge bg-primary text-white rounded-pill">已结束</div>
+                                                    </c:if>
+                                                    <c:if test="${date.only_date(deadline) == -1}">
+                                                        <div class="badge bg-warning rounded-pill">正在进行</div>
+                                                    </c:if>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="/downloadServlet?filename=${subject.ID}"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                                    <c:if test="${date.only_date(deadline) == -1}">
+                                                        <button class="btn btn-datatable btn-icon btn-transparent-dark" onclick="a2(${subject.ID}, ${subject.limit})"><i class="fa fa-check-square" aria-hidden="true"></i></button>
+                                                    </c:if>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                        
                 </main>
 
                 <footer class="footer-admin mt-auto footer-light">
@@ -136,12 +131,12 @@
         <%-- 仅仅为了实现新版的alert --%>
         <a data-bs-toggle="modal" data-bs-target="#exampleModal2" style="display: none;" id="alert1"></a>
         <a data-bs-toggle="modal" data-bs-target="#exampleModal3" style="display: none;" id="alert2"></a>
-        <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">提示</h5>
-                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body" id="only_content">已成功发送报名请求</div>
                     <div class="modal-footer">
@@ -150,12 +145,12 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">提示</h5>
-                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body" id="only_input"><input class="form-control form-control-solid" type="text" placeholder="请输入团队码..." id="team_code"/></div>
                     <div class="modal-footer">
@@ -171,20 +166,21 @@
         <script src="/assets/demo/chart-area-demo.js"></script>
         <script src="/assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-        <script src="/js/datatables/datatables-simple-demo.js"></script>
+<%--        <script src="/js/datatables/datatables-simple-demo.js"></script>--%>
         <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
         <script src="/js/litepicker.js"></script>
         <script src="/js/jquery-3.5.1.js"></script>
         <script src="/js/datatables/jquery.dataTables.js"></script>
         <script src="/JQuery/chat/js/chat.js"></script>
         <script>
+            var aId;
             $(document).ready( function () {
                 $('#datatablesSimple').DataTable({
                     bLengthChange:false,
                     // ordering: false,
-                    order: [[3, 'desc']],
+                    order: [[2, 'desc']],
                     columnDefs:[{
-                　　　　targets : [0,1,2,5,6,7], 
+                　　　　targets : [0,1,3,5,6],
                 　　　　orderable : false
                 　　}],
                     sInfoEmpty: "No entries to show",
@@ -223,6 +219,7 @@
                         }
                     )
                 } else {
+                    aId = ID;
                     document.getElementById("alert2").click();
                 }
             }
@@ -230,8 +227,8 @@
             function a3() {
                 var team_code = $('#team_code').val();
                 $.getJSON(
-                    "/requestServlet",
-                    {"id": ID, "team_code": team_code},
+                    "/requestServlet2",
+                    {"id": aId, "team_code": team_code},
                     function (result) {
                         var json = eval(result);
                         if (json == '1') {

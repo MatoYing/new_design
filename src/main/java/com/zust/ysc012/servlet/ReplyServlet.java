@@ -22,28 +22,31 @@ public class ReplyServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String reply = req.getParameter("reply");
         IAllDao commonDao = new CommonDaoImpl();
-        int useless = 0;
+        int useless = Integer.parseInt(req.getParameter("useless"));
         int team = 0;
         try {
-            useless = Integer.parseInt(req.getParameter("useless"));
-            useless = Integer.parseInt(req.getParameter("team"));
+            team = Integer.parseInt(req.getParameter("team"));
         } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            team = 0;
             e.printStackTrace();
         }
         if (reply.equals("1")) {
             //同意
             if (team != 0) {
-                commonDao.update_reply_team_sql(team, 1);
-            } else {
-                commonDao.update_reply_noTeam_sql(useless, 1);
-            }
-        } else {
-            //不同意
-            if (team != 0) {
                 commonDao.update_reply_team_sql(team, 2);
             } else {
                 commonDao.update_reply_noTeam_sql(useless, 2);
             }
+        } else {
+            //不同意
+            if (team != 0) {
+                commonDao.update_reply_team_sql(team, 3);
+            } else {
+                commonDao.update_reply_noTeam_sql(useless, 3);
+            }
         }
+        resp.sendRedirect("/view/teacher/tea_person.jsp");
     }
 }

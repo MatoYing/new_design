@@ -1,3 +1,5 @@
+var ws;
+var ws_url = "ws://localhost:8080/chatroom";
 screenFuc();
 function screenFuc() {
     var topHeight = $(".chatBox-head").innerHeight();//聊天头部高度
@@ -69,12 +71,17 @@ $(".chat-return").click(function () {
     $(".chatBox-list").fadeToggle(1);
     $(".chatBox-kuang").fadeToggle(1);
 });
+
+
+
 //      发送信息
 $("#chat-fasong").click(function () {
+    var myDate = new Date();
+    ws_connect();
     var textContent = $(".div-textarea").html().replace(/[\n\r]/g, '<br>')
     if (textContent != "") {
         $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
-            "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
+            "<div class=\"author-name\"><small class=\"chat-date\">" + myDate + "</small> </div> " +
             "<div class=\"right\"> <div class=\"chat-message\"> " + textContent + " </div> " +
             "<div class=\"chat-avatars\"><img src=\"img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
         //发送后清空输入框
@@ -83,50 +90,98 @@ $("#chat-fasong").click(function () {
         $(document).ready(function () {
             $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
         });
+        ws.send(textContent);
     }
 });
-//      发送表情
-$("#chat-biaoqing").click(function () {
-    $(".biaoqing-photo").toggle();
-});
-$(document).click(function () {
-    $(".biaoqing-photo").css("display", "none");
-});
-$("#chat-biaoqing").click(function (event) {
-    event.stopPropagation();//阻止事件
-});
-$(".emoji-picker-image").each(function () {
-    $(this).click(function () {
-        var bq = $(this).parent().html();
-        console.log(bq)
-        $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
-            "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
-            "<div class=\"right\"> <div class=\"chat-message\"> " + bq + " </div> " +
-            "<div class=\"chat-avatars\"><img src=\"img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
-        //发送后关闭表情框
-        $(".biaoqing-photo").toggle();
-        //聊天框默认最底部
-        $(document).ready(function () {
-            $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
-        });
-    })
-});
-//      发送图片
-function selectImg(pic) {
-    if (!pic.files || !pic.files[0]) {
+
+//连接对象
+function ws_connect(number) {
+    var loginUser = '${sessionScope.number}';
+    console.log(2121);
+    console.log(loginUser);
+    if ('WebSocket' in window) {
+        ws = new WebSocket(ws_url + '?loginName=' + loginUser);
+    } else if ('MozWebSocket' in window) {
+        ws = new MozWebSocket(ws_url);
+    } else {
+        console.log('Error: WebSocket is not supported by this browser.');
         return;
     }
-    var reader = new FileReader();
-    reader.onload = function (evt) {
-        var images = evt.target.result;
-        $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
-            "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
-            "<div class=\"right\"> <div class=\"chat-message\"><img src=" + images + "></div> " +
-            "<div class=\"chat-avatars\"><img src=\"img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
-        //聊天框默认最底部
-        $(document).ready(function () {
-            $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
-        });
+    ws.onopen = function () {
+        console.log('Info: WebSocket connection opened.');
     };
-    reader.readAsDataURL(pic.files[0]);
-}
+    ws.onclose = function () {
+        console.log('Info: WebSocket closed.');
+    };
+    //后台sendText发送的会到这里
+    ws.onmessage = function (message) {
+        var receiveMsg = message.data;
+        var obj = JSON.parse(receiveMsg);
+        //追加，不覆盖
+        $('#record').append('<div>' + obj.msgSender + '&nbsp;' + obj.msgDateStr + '</div><div>' + obj.msgInfo + '</div>');
+    };
+};
+function ws_sendMsg() {
+    var msg=$('#msg').val();
+    //发送给后端
+    ws.send(msg)
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+// //      发送表情
+// $("#chat-biaoqing").click(function () {
+//     $(".biaoqing-photo").toggle();
+// });
+// $(document).click(function () {
+//     $(".biaoqing-photo").css("display", "none");
+// });
+// $("#chat-biaoqing").click(function (event) {
+//     event.stopPropagation();//阻止事件
+// });
+// $(".emoji-picker-image").each(function () {
+//     $(this).click(function () {
+//         var bq = $(this).parent().html();
+//         console.log(bq)
+//         $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
+//             "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
+//             "<div class=\"right\"> <div class=\"chat-message\"> " + bq + " </div> " +
+//             "<div class=\"chat-avatars\"><img src=\"img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
+//         //发送后关闭表情框
+//         $(".biaoqing-photo").toggle();
+//         //聊天框默认最底部
+//         $(document).ready(function () {
+//             $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
+//         });
+//     })
+// });
+// //      发送图片
+// function selectImg(pic) {
+//     if (!pic.files || !pic.files[0]) {
+//         return;
+//     }
+//     var reader = new FileReader();
+//     reader.onload = function (evt) {
+//         var images = evt.target.result;
+//         $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
+//             "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
+//             "<div class=\"right\"> <div class=\"chat-message\"><img src=" + images + "></div> " +
+//             "<div class=\"chat-avatars\"><img src=\"img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
+//         //聊天框默认最底部
+//         $(document).ready(function () {
+//             $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
+//         });
+//     };
+//     reader.readAsDataURL(pic.files[0]);
+// }

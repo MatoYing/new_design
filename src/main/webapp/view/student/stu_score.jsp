@@ -15,7 +15,6 @@
     <%@ include file="/directory1.jsp"%>
     <div id="layoutSidenav">
         <%@ include file="/directory2.jsp"%>
-
             <div id="layoutSidenav_content">
                 <main>
                     <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
@@ -35,8 +34,8 @@
                     <!-- Main page content-->
                     <div class="container-xl px-4 mt-4">
                         <nav class="nav nav-borders">
-                            <a class="nav-link" href="stu_profile.jsp">个人</a>
-                            <a class="nav-link active ms-0" href="stu_score.jsp">成绩</a>
+                            <a class="nav-link" href="/view/student/stu_profile.jsp">个人</a>
+                            <a class="nav-link active ms-0" href="/view/student/stu_score.jsp">成绩</a>
                         </nav>
                         <hr class="mt-0 mb-4" />
                         <div class="row">
@@ -58,20 +57,21 @@
                                                 <tbody>
                                                     <tr>
                                                         <th scope="row">1</th>
-                                                        <td>Mark</td>
-                                                        <td>Otto</td>
-                                                        <td>@mdo</td>
+                                                        <td>C语言</td>
+                                                        <td>2</td>
+                                                        <td>3.5</td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">2</th>
-                                                        <td>Jacob</td>
-                                                        <td>Thornton</td>
-                                                        <td>@fat</td>
+                                                        <td>C语言</td>
+                                                        <td>2</td>
+                                                        <td>3.5</td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">3</th>
-                                                        <td colspan="2">Larry the Bird</td>
-                                                        <td>@twitter</td>
+                                                        <td>C语言</td>
+                                                        <td>2</td>
+                                                        <td>3.5</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -95,20 +95,21 @@
                                                 <tbody>
                                                     <tr>
                                                         <th scope="row">1</th>
-                                                        <td>Mark</td>
-                                                        <td>Otto</td>
-                                                        <td>@mdo</td>
+                                                        <td>C语言</td>
+                                                        <td>2</td>
+                                                        <td>3.5</td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">2</th>
-                                                        <td>Jacob</td>
-                                                        <td>Thornton</td>
-                                                        <td>@fat</td>
+                                                        <td>C语言</td>
+                                                        <td>2</td>
+                                                        <td>3.5</td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">3</th>
-                                                        <td colspan="2">Larry the Bird</td>
-                                                        <td>@twitter</td>
+                                                        <td>C语言</td>
+                                                        <td>2</td>
+                                                        <td>3.5</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -131,20 +132,21 @@
                                                 <tbody>
                                                     <tr>
                                                         <th scope="row">1</th>
-                                                        <td>Mark</td>
-                                                        <td>Otto</td>
-                                                        <td>@mdo</td>
+                                                        <td>C语言</td>
+                                                        <td>2</td>
+                                                        <td>3.5</td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">2</th>
-                                                        <td>Jacob</td>
-                                                        <td>Thornton</td>
-                                                        <td>@fat</td>
+                                                        <td>C语言</td>
+                                                        <td>2</td>
+                                                        <td>3.5</td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">3</th>
-                                                        <td colspan="2">Larry the Bird</td>
-                                                        <td>@twitter</td>
+                                                        <td>C语言</td>
+                                                        <td>2</td>
+                                                        <td>3.5</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
